@@ -20,9 +20,19 @@ app.get("/api", (req, res) => {
   return;
 });
 
+let connectedPeers: string[] = [];
+
 io.on("connection", (socket) => {
   console.log("a user connected");
   console.log(socket.id);
+  connectedPeers.push(socket.id);
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+    connectedPeers = connectedPeers.filter(
+      (peerSocketId) => peerSocketId !== socket.id
+    );
+    console.log({ connectedPeers });
+  });
 });
 
 server.listen(PORT, () => {
